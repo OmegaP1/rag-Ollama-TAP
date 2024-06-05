@@ -2,7 +2,7 @@ import argparse
 import os
 import shutil
 from langchain_community.document_loaders import PyPDFDirectoryLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
 from get_embedding_function import get_embedding_function
 from langchain_community.vectorstores import Chroma
@@ -13,8 +13,7 @@ DATA_PATH = "data"
 
 
 def main():
-
-    # Check if the database should be cleared (using the --clear flag).
+    # Check if the database should be cleared (using the --reset flag).
     parser = argparse.ArgumentParser()
     parser.add_argument("--reset", action="store_true", help="Reset the database.")
     args = parser.parse_args()
@@ -44,6 +43,9 @@ def split_documents(documents: list[Document]):
 
 
 def add_to_chroma(chunks: list[Document]):
+    # Clear and recreate the database to ensure embedding dimensions match.
+    clear_database()
+    
     # Load the existing database.
     db = Chroma(
         persist_directory=CHROMA_PATH, embedding_function=get_embedding_function()
@@ -73,10 +75,8 @@ def add_to_chroma(chunks: list[Document]):
 
 
 def calculate_chunk_ids(chunks):
-
     # This will create IDs like "data/monopoly.pdf:6:2"
     # Page Source : Page Number : Chunk Index
-
     last_page_id = None
     current_chunk_index = 0
 

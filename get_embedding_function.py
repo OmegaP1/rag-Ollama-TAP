@@ -1,5 +1,5 @@
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.embeddings.ollama import OllamaEmbeddings
 
 def get_embedding_function():
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    embeddings = OllamaEmbeddings(model="nomic-embed-text")
     return embeddings
